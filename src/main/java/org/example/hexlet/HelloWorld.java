@@ -10,6 +10,9 @@ public class HelloWorld  {
         });
 
         app.get("/", ctx -> ctx.result("Hello World"));
+        app.get("/users", ctx -> ctx.result("GET /users"));
+        app.post("/users", ctx -> ctx.result("POST /users"));
+
         app.start(7070);
     }
 }
