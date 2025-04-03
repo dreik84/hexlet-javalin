@@ -18,6 +18,20 @@ public class HelloWorld  {
             ctx.result("Hello " + name + "!");
         });
 
+        app.get("/courses/{id}", ctx -> {
+            ctx.result("Course ID: " + ctx.pathParam("id"));
+        });
+        app.get("/users/{id}", ctx -> {
+            var id = ctx.pathParamAsClass("id", Integer.class).get();
+            ctx.result("User ID: " + id);
+        });
+
+        app.get("/courses/{courseId}/lessons/{id}", ctx -> {
+            var courseId = ctx.pathParam("courseId");
+            var lessonId =  ctx.pathParam("id");
+            ctx.result("Course ID: " + courseId + " Lesson ID: " + lessonId);
+        });
+
         app.start(7070);
     }
 }
