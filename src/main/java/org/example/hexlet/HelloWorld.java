@@ -1,15 +1,23 @@
 package org.example.hexlet;
 
 import io.javalin.Javalin;
+import io.javalin.rendering.template.JavalinJte;
+import org.example.hexlet.dto.courses.CoursesPage;
+import org.example.hexlet.model.Course;
+
+import java.util.List;
+
+import static io.javalin.rendering.template.TemplateUtil.model;
 
 public class HelloWorld  {
     public static void main(String[] args) {
 
         var app = Javalin.create(config -> {
             config.bundledPlugins.enableDevLogging();
+            config.fileRenderer(new JavalinJte());
         });
 
-        app.get("/", ctx -> ctx.result("Hello World"));
+        app.get("/", ctx -> ctx.render("index.jte"));
         app.get("/users", ctx -> ctx.result("GET /users"));
         app.post("/users", ctx -> ctx.result("POST /users"));
 
@@ -19,8 +27,12 @@ public class HelloWorld  {
         });
 
         app.get("/courses/{id}", ctx -> {
-            ctx.result("Course ID: " + ctx.pathParam("id"));
+            var id = ctx.pathParam("id");
+            var course = new Course("java", "java basics");
+            var page = new CoursesPage(List.of(new Course("java", "basics")), "java");
+            ctx.render("courses/show.jte", model("page", page));
         });
+
         app.get("/users/{id}", ctx -> {
             var id = ctx.pathParamAsClass("id", Integer.class).get();
             ctx.result("User ID: " + id);
