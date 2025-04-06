@@ -4,6 +4,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 plugins {
     id("java")
     application
+    id("io.freefair.lombok") version "8.1.0"
 }
 
 application {
