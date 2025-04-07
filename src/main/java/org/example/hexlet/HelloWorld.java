@@ -5,6 +5,8 @@ import io.javalin.rendering.template.JavalinJte;
 import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.model.Course;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import java.util.List;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -33,9 +35,16 @@ public class HelloWorld  {
             ctx.render("courses/show.jte", model("page", page));
         });
 
+//        app.get("/users/{id}", ctx -> {
+//            var id = ctx.pathParamAsClass("id", Integer.class).get();
+//            ctx.result("User ID: " + id);
+//        });
+
         app.get("/users/{id}", ctx -> {
-            var id = ctx.pathParamAsClass("id", Integer.class).get();
-            ctx.result("User ID: " + id);
+            var id = ctx.pathParam("id");
+            var escapedId = StringEscapeUtils.escapeHtml4(id);
+            ctx.contentType("text/html");
+            ctx.result(escapedId);
         });
 
         app.get("/courses/{courseId}/lessons/{id}", ctx -> {
