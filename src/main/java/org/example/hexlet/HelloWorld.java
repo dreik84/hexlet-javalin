@@ -7,6 +7,7 @@ import org.example.hexlet.model.Course;
 
 import org.apache.commons.text.StringEscapeUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
@@ -34,6 +35,20 @@ public class HelloWorld  {
             var page = new CoursesPage(List.of(new Course("java", "basics")), "java");
             ctx.render("courses/show.jte", model("page", page));
         });
+
+        app.get("/courses", ctx -> {
+            var term = ctx.queryParam("term");
+            ArrayList<Course> courses;
+            // Фильтруем, только если была отправлена форма
+            if (term != null) {
+                courses = new ArrayList<>();
+            } else {
+                courses = new ArrayList<>();
+            }
+            var page = new CoursesPage(courses, term);
+            ctx.render("courses/index.jte", model("page", page));
+        });
+        app.start(7070);
 
 //        app.get("/users/{id}", ctx -> {
 //            var id = ctx.pathParamAsClass("id", Integer.class).get();
