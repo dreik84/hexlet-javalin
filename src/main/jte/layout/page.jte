@@ -1,18 +1,16 @@
-@import org.example.Page
+@import org.example.hexlet.dto.courses.CoursesPage
 @import gg.jte.Content
 
-@param Page page
+@param CoursesPage page
 @param Content content
 @param Content footer = null
 
 <head>
-    @if(page.getDescription() != null)
-        <meta name="description" content="${page.getDescription()}">
-    @endif
-    <title>${page.getTitle()}</title>
+    <meta charset="UTF-8">
+    <title>Document</title>
 </head>
 <body>
-    <h1>${page.getTitle()}</h1>
+    <h1>Hello</h1>
     <div class="content">
         ${content}
     </div>
