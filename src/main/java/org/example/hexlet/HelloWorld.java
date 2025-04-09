@@ -6,6 +6,8 @@ import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.model.Course;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.example.hexlet.model.User;
+import org.example.hexlet.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,8 @@ public class HelloWorld  {
 
         app.get("/", ctx -> ctx.render("index.jte"));
         app.get("/users", ctx -> ctx.result("GET /users"));
-        app.post("/users", ctx -> ctx.result("POST /users"));
+
+
 
         app.get("/hello", ctx -> {
             var name = ctx.queryParamAsClass("name", String.class).getOrDefault("World");
@@ -54,6 +57,21 @@ public class HelloWorld  {
 //            var id = ctx.pathParamAsClass("id", Integer.class).get();
 //            ctx.result("User ID: " + id);
 //        });
+
+        app.get("/users/build", ctx -> {
+            ctx.render("users/build.jte");
+        });
+
+        app.post("/users", ctx -> {
+            var name = ctx.formParam("name").trim();
+            var email = ctx.formParam("email").trim().toLowerCase();
+            var password = ctx.formParam("password");
+            var passwordConfirmation = ctx.formParam("passwordConfirmation");
+
+            var user = new User(name, email, password);
+            UserRepository.save(user);
+            ctx.redirect("/users");
+        });
 
         app.get("/users/{id}", ctx -> {
             var id = ctx.pathParam("id");
