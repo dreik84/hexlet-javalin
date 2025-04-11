@@ -25,7 +25,7 @@ public class HelloWorld  {
         });
 
         app.get("/", ctx -> ctx.render("index.jte"));
-        app.get("/users", ctx -> ctx.result("GET /users"));
+        app.get(NamedRoutes.usersPath(), ctx -> ctx.result("GET /users"));
 
 
 
@@ -76,9 +76,11 @@ public class HelloWorld  {
                         .get();
                 var user = new User(name, email, password);
                 UserRepository.save(user);
+                ctx.header("Content-Type: text/html; charset=utf-8");
                 ctx.redirect("/users");
             } catch (ValidationException e) {
                 var page = new BuildUserPage(name, email, e.getErrors());
+                ctx.header("Content-Type: text/html; charset=utf-8");
                 ctx.render("users/build.jte", model("page", page));
             }
         });
