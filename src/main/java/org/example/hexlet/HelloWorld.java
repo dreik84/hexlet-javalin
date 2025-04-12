@@ -3,6 +3,7 @@ package org.example.hexlet;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import io.javalin.validation.ValidationException;
+import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.model.Course;
@@ -26,8 +27,6 @@ public class HelloWorld  {
 
         app.get("/", ctx -> ctx.render("index.jte"));
         app.get(NamedRoutes.usersPath(), ctx -> ctx.result("GET /users"));
-
-
 
         app.get("/hello", ctx -> {
             var name = ctx.queryParamAsClass("name", String.class).getOrDefault("World");
@@ -55,42 +54,13 @@ public class HelloWorld  {
         });
         app.start(7070);
 
-//        app.get("/users/{id}", ctx -> {
-//            var id = ctx.pathParamAsClass("id", Integer.class).get();
-//            ctx.result("User ID: " + id);
-//        });
-
-        app.get("/users/build", ctx -> {
-            var page = new BuildUserPage();
-            ctx.render("users/build.jte", model("page", page));
-        });
-
-        app.post("/users", ctx -> {
-            var name = ctx.formParam("name");
-            var email = ctx.formParam("email");
-
-            try {
-                var passwordConfirmation = ctx.formParam("passwordConfirmation");
-                var password = ctx.formParamAsClass("password", String.class)
-                        .check(value -> value.equals(passwordConfirmation), "Пароли не совпадают")
-                        .get();
-                var user = new User(name, email, password);
-                UserRepository.save(user);
-                ctx.header("Content-Type: text/html; charset=utf-8");
-                ctx.redirect("/users");
-            } catch (ValidationException e) {
-                var page = new BuildUserPage(name, email, e.getErrors());
-                ctx.header("Content-Type: text/html; charset=utf-8");
-                ctx.render("users/build.jte", model("page", page));
-            }
-        });
-
-        app.get("/users/{id}", ctx -> {
-            var id = ctx.pathParam("id");
-            var escapedId = StringEscapeUtils.escapeHtml4(id);
-            ctx.contentType("text/html");
-            ctx.result(escapedId);
-        });
+        app.get("/users", UsersController::index);
+        app.get("/users/build", UsersController::build);
+        app.get("/users/{id}", UsersController::show);
+        app.post("/users", UsersController::create);
+        app.get("/users/{id}/edit", UsersController::edit);
+        app.patch("/users/{id}", UsersController::update);
+        app.delete("/users/{id}", UsersController::destroy);
 
         app.get("/courses/{courseId}/lessons/{id}", ctx -> {
             var courseId = ctx.pathParam("courseId");
