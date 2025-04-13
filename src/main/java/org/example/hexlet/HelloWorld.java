@@ -25,7 +25,21 @@ public class HelloWorld  {
             config.fileRenderer(new JavalinJte());
         });
 
+        app.before(ctx -> {
+            var path = ctx.path();
+            System.out.println("Request path: " + path);
+        });
+
+        app.before(ctx -> {
+            ctx.header("X-Custom-Header", "value");
+        });
+
         app.get("/", ctx -> ctx.render("index.jte"));
+
+        app.after(ctx -> {
+            System.out.println("Response has been sent");
+        });
+
         app.get(NamedRoutes.usersPath(), ctx -> ctx.result("GET /users"));
 
         app.get("/hello", ctx -> {
