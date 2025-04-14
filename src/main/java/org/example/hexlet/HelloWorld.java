@@ -4,6 +4,7 @@ import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import io.javalin.validation.ValidationException;
 import org.example.hexlet.controller.UsersController;
+import org.example.hexlet.dto.MainPage;
 import org.example.hexlet.dto.courses.CoursesPage;
 import org.example.hexlet.dto.users.BuildUserPage;
 import org.example.hexlet.model.Course;
@@ -30,11 +31,24 @@ public class HelloWorld  {
             System.out.println("Request path: " + path);
         });
 
+//        app.before(ctx -> {
+//            String id = ctx.queryParam("id");
+//            if (id == null || id.isEmpty()) {
+//                ctx.status(400).result("Bad Request: Missing 'id' parameter");
+//                ctx.skipRemainingHandlers(); // Завершаем обработку
+//            }
+//        });
+
         app.before(ctx -> {
             ctx.header("X-Custom-Header", "value");
         });
 
-        app.get("/", ctx -> ctx.render("index.jte"));
+        app.get("/", ctx -> {
+            var visited = Boolean.valueOf(ctx.cookie("visited"));
+            var page = new MainPage(visited);
+            ctx.render("index.jte", model("page", page));
+            ctx.cookie("visited", String.valueOf(true));
+        });
 
         app.after(ctx -> {
             System.out.println("Response has been sent");
