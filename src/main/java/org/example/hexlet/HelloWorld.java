@@ -3,6 +3,7 @@ package org.example.hexlet;
 import io.javalin.Javalin;
 import io.javalin.rendering.template.JavalinJte;
 import io.javalin.validation.ValidationException;
+import org.example.hexlet.controller.SessionsController;
 import org.example.hexlet.controller.UsersController;
 import org.example.hexlet.dto.MainPage;
 import org.example.hexlet.dto.courses.CoursesPage;
@@ -43,12 +44,24 @@ public class HelloWorld  {
             ctx.header("X-Custom-Header", "value");
         });
 
+//        app.get("/", ctx -> {
+//            var visited = Boolean.valueOf(ctx.cookie("visited"));
+//            var page = new MainPage(visited);
+//            ctx.render("index.jte", model("page", page));
+//            ctx.cookie("visited", String.valueOf(true));
+//        }
+
         app.get("/", ctx -> {
-            var visited = Boolean.valueOf(ctx.cookie("visited"));
-            var page = new MainPage(visited);
+            var page = new MainPage(ctx.sessionAttribute("currentUser"));
             ctx.render("index.jte", model("page", page));
-            ctx.cookie("visited", String.valueOf(true));
         });
+
+        // Отображение формы логина
+        app.get("/sessions/build", SessionsController::build);
+        // Процесс логина
+        app.post("/sessions", SessionsController::create);
+        // Процесс выхода из аккаунта
+        app.delete("/sessions", SessionsController::destroy);
 
         app.after(ctx -> {
             System.out.println("Response has been sent");
