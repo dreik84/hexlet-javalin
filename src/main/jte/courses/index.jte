@@ -6,6 +6,9 @@
         <title>Хекслет</title>
     </head>
     <body>
+        @if(page.getFlash() != null)
+            <p>${page.getFlash()}</p>
+        @endif
         <h1>Hello</h1>
         @if(page.getCourses().isEmpty())
             <p>Пока не добавлено ни одного курса</p>
