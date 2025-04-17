@@ -12,6 +12,7 @@ import org.example.hexlet.model.Course;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.example.hexlet.model.User;
+import org.example.hexlet.repository.CourseRepository;
 import org.example.hexlet.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -72,6 +73,26 @@ public class HelloWorld  {
         app.get("/hello", ctx -> {
             var name = ctx.queryParamAsClass("name", String.class).getOrDefault("World");
             ctx.result("Hello " + name + "!");
+        });
+
+        app.post(NamedRoutes.coursesPath(), ctx -> {
+            var name = ctx.formParam("name");
+            var description = ctx.formParam("description");
+
+            var course = new Course(name, description);
+            CourseRepository.save(course);
+            // Добавляем сообщение в сессию
+            // Ключ может иметь любое название, здесь мы выбрали flash
+            ctx.sessionAttribute("flash", "Course has been created!");
+            ctx.redirect(NamedRoutes.coursesPath());
+        });
+
+        app.get(NamedRoutes.coursesPath(), ctx -> {
+            var courses = List.of(new Course("java", "basics"));
+            var term = "java";
+            var page = new CoursesPage(courses, term);
+            page.setFlash(ctx.consumeSessionAttribute("flash"));
+            ctx.render("courses/index.jte", model("page", page));
         });
 
         app.get("/courses/{id}", ctx -> {
